@@ -1,278 +1,260 @@
-<html><head><base href="https://websim.ai/">
+<html><head><base href="https://websim.ai" />
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Whitney', sans-serif; }
-body { background: #36393f; height: 100vh; }
-
-.container {
+.chat-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
   display: grid;
-  grid-template-columns: 72px 240px 1fr 240px;
-  min-height: 100vh; /* Change height to min-height */
+  grid-template-columns: 240px 1fr 240px;
+  gap: 20px;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-.servers {
-  background: #202225;
-  padding: 12px;
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.server {
-  width: 48px;
-  height: 48px;
-  background: #36393f;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: border-radius 0.2s;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 20px;
-  color: white;
+  align-items: center;
+  z-index: 1000;
 }
 
-.server:hover {
-  border-radius: 16px;
+.auth-container {
+  background: #36393f;
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+  color: #dcddde;
+}
+
+.auth-container h2 {
+  margin: 0 0 20px 0;
+  color: white;
+  text-align: center;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+  border: 1px solid #202225;
+  background: #40444b;
+  color: white;
+  font-size: 14px;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 12px;
+  margin: 16px 0;
+  border: none;
+  border-radius: 4px;
   background: #5865f2;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.auth-button:hover {
+  background: #4752c4;
+}
+
+.auth-switch {
+  text-align: center;
+  color: #72767d;
+}
+
+.auth-switch a {
+  color: #00b0f4;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .channels {
   background: #2f3136;
-  padding: 16px 8px;
-  color: #8e9297;
-  height: 100vh;
-  overflow-y: auto; /* Ensure channels scroll independently */
-}
-
-.server-name {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 16px 16px 16px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.server-name .edit-btn {
-  display: none;
-  cursor: pointer;
-  color: #b9bbbe;
-  padding: 4px;
-}
-
-.server-name:hover .edit-btn {
-  display: block;
-}
-
-.server-name input {
-  background: #40444b;
-  border: none;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  width: 100%;
-  margin-right: 8px;
-}
-
-.category {
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  color: #dcddde;
+  border-radius: 8px;
+  padding: 15px;
 }
 
 .channel {
-  padding: 6px 8px;
+  padding: 8px 12px;
+  margin: 2px 0;
   border-radius: 4px;
   cursor: pointer;
-  margin: 1px 0;
   display: flex;
   align-items: center;
-  gap: 6px;
 }
 
 .channel:hover {
-  background: rgba(79,84,92,0.4);
-  color: #dcddde;
+  background: rgba(255,255,255,0.1);
 }
 
 .channel.active {
-  background: rgba(79,84,92,0.6);
-  color: white;
+  background: rgba(255,255,255,0.2);
 }
 
-.chat {
-  background: #36393f;
+.channel-icon {
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.messages-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Ensure chat takes full height */
-  position: relative;
-}
-
-.chat-header {
-  height: 48px;
-  border-bottom: 1px solid #202225;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  color: white;
+  background: #36393f;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  height: calc(100vh - 130px); /* Account for header and input area */
-  max-height: calc(100vh - 130px);
+  padding: 20px;
 }
 
 .message {
-  margin-bottom: 16px;
   display: flex;
-  gap: 16px;
-  position: relative;
+  align-items: start;
+  margin: 12px 0;
+  padding: 8px;
+  border-radius: 4px;
+  animation: fadeIn 0.3s ease;
 }
 
-.avatar {
+.message:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.message img.avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  flex-shrink: 0;
+  margin-right: 12px;
 }
 
 .message-content {
   flex: 1;
 }
 
-.message-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.message .username {
+  color: #fff;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 
-.username { 
+.message .text {
+  color: #dcddde;
+  line-height: 1.4;
+}
+
+.input-area {
+  padding: 20px;
+  background: #40444b;
+  display: flex;
+  gap: 10px;
+}
+
+.input-area input[type="text"] {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background: #40444b;
+  color: #dcddde;
+  font-size: 15px;
+}
+
+.input-area input[type="text"]:focus {
+  outline: none;
+  background: #45494f;
+}
+
+.input-area button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #5865f2;
   color: white;
   font-weight: 500;
-}
-
-.timestamp {
-  color: #72767d;
-  font-size: 12px;
-}
-
-.text {
-  color: #dcddde;
-  word-wrap: break-word;
-}
-
-.input-container {
-  margin: 0 16px 24px;
-  background: #40444b;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: sticky; /* Keep input at the bottom */
-  bottom: 0;
-}
-
-.upload-btn, .emoji-btn {
-  color: #b9bbbe;
   cursor: pointer;
-  font-size: 20px;
+  transition: background 0.2s;
 }
 
-.upload-btn:hover, .emoji-btn:hover {
-  color: #dcddde;
-}
-
-input[type="text"] {
-  background: transparent;
-  border: none;
-  color: #dcddde;
-  flex: 1;
-  outline: none;
+.input-area button:hover {
+  background: #4752c4;
 }
 
 .members {
   background: #2f3136;
-  padding: 16px;
-  overflow-y: auto; /* Ensure members scroll independently */
-  height: 100vh; /* Full height for members list */
+  color: #dcddde;
+  border-radius: 8px;
+  padding: 15px;
 }
 
 .member {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px;
+  padding: 8px;
   border-radius: 4px;
-  cursor: pointer;
-  position: relative;
+  margin: 2px 0;
 }
 
 .member:hover {
-  background: rgba(79,84,92,0.4);
+  background: rgba(255,255,255,0.05);
 }
 
-.online-indicator {
-  width: 12px;
-  height: 12px;
-  background: #3ba55c;
+.member img.avatar {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 3px solid #2f3136;
-  position: absolute;
-  bottom: 0;
-  left: 30px;
+  margin-right: 10px;
 }
 
-.role {
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 3px;
+.member .username {
   font-weight: 500;
 }
 
-.role-user {
-  background: #257dd1;
-  color: white;
+.online-indicator {
+  width: 10px;
+  height: 10px;
+  background: #43b581;
+  border-radius: 50%;
+  margin-right: 8px;
 }
 
-.role-owner {
-  background: #992d22;
-  color: white;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.spinzerr-tools {
-  margin: 8px 0;
-  padding: 8px;
-  background: linear-gradient(45deg, #ff3366, #992d22);
-  color: white;
-  border-radius: 4px;
+.file-upload {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.file-upload input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
   cursor: pointer;
-  display: none; /* Hide by default */
 }
 
 .preview-container {
-  padding: 8px;
-  background: rgba(0,0,0,0.2);
-  border-radius: 4px;
-  margin-bottom: 8px;
   display: none;
-  position: sticky; /* Update preview container positioning */
-  bottom: 80px;
-  margin: 0 16px;
+  padding: 10px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
+  margin: 10px 0;
 }
 
 .preview-image {
@@ -280,462 +262,135 @@ input[type="text"] {
   max-height: 200px;
   border-radius: 4px;
 }
-
-.message-controls {
-  position: absolute;
-  right: 0;
-  top: 0;
-  display: none;
-  background: #36393f;
-  border-radius: 4px;
-  padding: 4px;
-}
-
-.message:hover .message-controls {
-  display: flex;
-  gap: 4px;
-}
-
-.control-btn {
-  padding: 4px;
-  cursor: pointer;
-  color: #b9bbbe;
-}
-
-.control-btn:hover {
-  color: #dcddde;
-}
-
-.embed {
-  max-width: 400px;
-  margin-top: 8px;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.embed img, .embed video {
-  max-width: 100%;
-  border-radius: 4px;
-}
-
-.embed audio {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.reply-btn {
-  padding: 4px;
-  cursor: pointer;
-  color: #b9bbbe;
-}
-
-.reply-btn:hover {
-  color: #dcddde;
-}
-
-.replied-to {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 8px;
-  margin-bottom: 4px;
-  border-radius: 4px;
-  font-size: 0.9em;
-  color: #b9bbbe;
-  background: rgba(64, 68, 75, 0.3);
-}
-
-.replied-to::before {
-  content: "↩️";
-}
-
-.replied-to-highlight {
-  background: rgba(255, 212, 0, 0.1);
-}
-
-.message.has-reply {
-  margin-top: 4px;
-}
-
-/* Add Spinzerr Tools GUI styles */
-.spinzerr-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #36393f;
-  border-radius: 8px;
-  padding: 20px;
-  width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  z-index: 1000;
-  display: none;
-}
-
-.spinzerr-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #4f545c;
-}
-
-.spinzerr-modal-title {
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.spinzerr-modal-close {
-  color: #dcddde;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.spinzerr-tools-section {
-  margin-bottom: 24px;
-}
-
-.spinzerr-tools-section-title {
-  color: #dcddde;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 12px;
-}
-
-.spinzerr-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.spinzerr-tool-button {
-  background: #4f545c;
-  color: white;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-  text-align: center;
-}
-
-.spinzerr-tool-button:hover {
-  background: #5865f2;
-}
-
-.spinzerr-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 999;
-  display: none;
-}
-
-.spinzerr-input {
-  background: #40444b;
-  border: none;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  width: 100%;
-  margin-bottom: 12px;
-}
-
-.spinzerr-user-list {
-  background: #2f3136;
-  border-radius: 4px;
-  padding: 8px;
-  margin-top: 12px;
-}
-
-.spinzerr-user-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.spinzerr-user-item:hover {
-  background: #4f545c;
-}
 </style>
-</head>
-<body>
-<div class="container">
-  <div class="servers">
-    <div class="server">DC</div>
+
+<div class="auth-overlay">
+  <div class="auth-container">
+    <h2>Create Account</h2>
+    <input type="email" class="auth-input" placeholder="Email" id="email">
+    <input type="text" class="auth-input" placeholder="Username" id="username">
+    <input type="password" class="auth-input" placeholder="Password" id="password">
+    <button class="auth-button" onclick="register()">Create Account</button>
+    <div class="auth-switch">
+      Already have an account? <a onclick="toggleAuth()">Sign In</a>
+    </div>
   </div>
-  
+</div>
+
+<div class="chat-container" style="display: none;">
   <div class="channels">
-    <div class="server-name"></div>
-    <div class="category">
-      <span>Text Channels</span>
-      <span class="spinzerr-tools">🛠️ Spinzerr Tools</span>
-    </div>
     <div class="channel active">
-      <span>#</span> general
+      <span class="channel-icon">#</span>
+      general
+    </div>
+    <div class="channel">
+      <span class="channel-icon">#</span>
+      random
     </div>
   </div>
   
-  <div class="chat">
-    <div class="chat-header">
-      <span>#general</span>
-    </div>
-    
+  <div class="messages-container">
     <div class="messages"></div>
-    
-    <div class="preview-container">
-      <img class="preview-image">
-    </div>
-    
-    <div class="input-container">
-      <label class="upload-btn">
-        <input type="file" style="display:none" accept="image/*,video/*,audio/*">
-        +
-      </label>
+    <div class="input-area">
+      <input type="file" accept="image/*" style="display: none">
+      <div class="preview-container">
+        <img class="preview-image">
+      </div>
       <input type="text" placeholder="Message #general">
-      <div class="emoji-btn">😊</div>
+      <button class="file-btn">📎</button>
+      <button onclick="sendMessage()">Send</button>
     </div>
   </div>
   
   <div class="members"></div>
 </div>
 
-<div class="spinzerr-modal-overlay"></div>
-<div class="spinzerr-modal">
-  <div class="spinzerr-modal-header">
-    <div class="spinzerr-modal-title">🛠️ Spinzerr Tools</div>
-    <div class="spinzerr-modal-close">×</div>
-  </div>
-  
-  <div class="spinzerr-tools-section">
-    <div class="spinzerr-tools-section-title">Channel Management</div>
-    <div class="spinzerr-tools-grid">
-      <div class="spinzerr-tool-button" data-action="create-category">Create Category</div>
-      <div class="spinzerr-tool-button" data-action="create-channel">Create Channel</div>
-      <div class="spinzerr-tool-button" data-action="edit-category">Edit Category</div>
-      <div class="spinzerr-tool-button" data-action="edit-channel">Edit Channel</div>
-    </div>
-  </div>
-  
-  <div class="spinzerr-tools-section">
-    <div class="spinzerr-tools-section-title">User Management</div>
-    <div class="spinzerr-tools-grid">
-      <div class="spinzerr-tool-button" data-action="mute-user">Mute User</div>
-      <div class="spinzerr-tool-button" data-action="unmute-user">Unmute User</div>
-      <div class="spinzerr-tool-button" data-action="ban-user">Ban User</div>
-      <div class="spinzerr-tool-button" data-action="kick-user">Kick User</div>
-    </div>
-  </div>
-</div>
-
 <script>
 const room = new WebsimSocket();
 let currentUser = null;
-let isSpinzerr = false;
-let replyingTo = null;
+let isLoginMode = false;
 
-async function createTables() {
-  await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `CREATE TABLE IF NOT EXISTS messages (
+async function initialize() {
+  currentUser = await window.websim.getUser();
+  if(currentUser) {
+    document.querySelector('.auth-overlay').style.display = 'none';
+    document.querySelector('.chat-container').style.display = 'grid';
+    setupWebSocket();
+    setupEventListeners();
+    await createMessageTable();
+    await loadInitialMessages();
+  }
+}
+
+function toggleAuth() {
+  isLoginMode = !isLoginMode;
+  const container = document.querySelector('.auth-container');
+  if(isLoginMode) {
+    container.querySelector('h2').textContent = 'Sign In';
+    container.querySelector('.auth-button').textContent = 'Sign In';
+    container.querySelector('.auth-switch').innerHTML = 
+      'Need an account? <a onclick="toggleAuth()">Create Account</a>';
+    container.querySelector('#username').style.display = 'none';
+  } else {
+    container.querySelector('h2').textContent = 'Create Account';
+    container.querySelector('.auth-button').textContent = 'Create Account';
+    container.querySelector('.auth-switch').innerHTML = 
+      'Already have an account? <a onclick="toggleAuth()">Sign In</a>';
+    container.querySelector('#username').style.display = 'block';
+  }
+}
+
+async function register() {
+  const email = document.querySelector('#email').value;
+  const username = document.querySelector('#username').value;
+  const password = document.querySelector('#password').value;
+
+  try {
+    await websim.signup(email, password, username);
+    location.reload();
+  } catch(error) {
+    alert('Registration failed: ' + error.message);
+  }
+}
+
+async function login() {
+  const email = document.querySelector('#email').value;
+  const password = document.querySelector('#password').value;
+
+  try {
+    await websim.login(email, password);
+    location.reload();
+  } catch(error) {
+    alert('Login failed: ' + error.message);
+  }
+}
+
+async function createMessageTable() {
+  const query = `
+    CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY,
       user_id TEXT,
       username TEXT,
       avatar_url TEXT,
       content TEXT,
       timestamp TEXT,
-      channel TEXT,
-      file_url TEXT,
-      reply_to INTEGER,
-      replied_content TEXT,
-      replied_username TEXT
-    )`
-  }));
-  
-  await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `CREATE TABLE IF NOT EXISTS server_settings (
-      id INTEGER PRIMARY KEY,
-      name TEXT
-    )`
-  }));
-  
-  await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `INSERT OR IGNORE INTO server_settings (id, name) VALUES (1, 'Main Server')`
-  }));
-}
-
-async function initializeChat() {
-  currentUser = await window.websim.getUser();
-  isSpinzerr = currentUser.username === 'Spinzerr';
-  
-  if(isSpinzerr) {
-    document.querySelector('.spinzerr-tools').style.display = 'block';
-    setupSpinzerrTools();
-  }
-  
-  await createTables();
-  await loadServerName();
-  loadMessages();
-  setupWebSocket();
-  updateMembersList();
-  setupReplyHandlers();
-  
-  // Poll for member updates every second
-  setInterval(updateMembersList, 1000);
-}
-
-async function loadServerName() {
-  const result = await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `SELECT name FROM server_settings WHERE id = 1`
-  }));
-  const data = await result.json();
-  if (data && data[0]) {
-    updateServerNameUI(data[0].name);
-  }
-}
-
-async function updateServerName(newName) {
-  await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `UPDATE server_settings SET name = '${newName}' WHERE id = 1`
-  }));
-  
-  room.send({
-    type: 'server_name_update',
-    name: newName
-  });
-}
-
-function updateServerNameUI(name) {
-  const serverNameDiv = document.querySelector('.server-name');
-  serverNameDiv.innerHTML = `
-    <span>${name}</span>
-    ${isSpinzerr ? '<div class="edit-btn">✏️</div>' : ''}
+      file_url TEXT NULL
+    )
   `;
+  await fetch('/api/v1/sql/?' + new URLSearchParams({sql: query}));
 }
 
-async function loadMessages() {
-  const result = await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `SELECT * FROM messages WHERE channel = 'general' ORDER BY timestamp DESC LIMIT 50`
-  }));
-  const messages = await result.json();
+async function loadInitialMessages() {
+  const query = `SELECT * FROM messages ORDER BY timestamp DESC LIMIT 50`;
+  const response = await fetch('/api/v1/sql/?' + new URLSearchParams({sql: query}));
+  const result = await response.json();
   
-  const messagesDiv = document.querySelector('.messages');
-  messagesDiv.innerHTML = ''; // Clear existing messages
-  
-  messages.reverse().forEach((msg) => {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message' + (msg.reply_to ? ' has-reply' : '');
-    messageDiv.dataset.messageId = msg.id;
-    addMessageToUI(msg);
-  });
-}
-
-function addMessageToUI(msg) {
-  const messagesContainer = document.querySelector('.messages');
-  const wasAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop === messagesContainer.clientHeight; // Check if at bottom
-  
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message' + (msg.reply_to ? ' has-reply' : '');
-  messageDiv.dataset.messageId = msg.id;
-  messageDiv.innerHTML = `
-    <img class="avatar" src="${msg.avatar_url}" alt="Avatar">
-    <div class="message-content">
-      ${msg.reply_to ? `
-        <div class="replied-to ${msg.replied_username === currentUser.username ? 'replied-to-highlight' : ''}">
-          Replying to ${msg.replied_username}: ${msg.replied_content}
-        </div>
-      ` : ''}
-      <div class="message-header">
-        <span class="username">${msg.username}</span>
-        <span class="role ${msg.username === 'Spinzerr' ? 'role-owner' : 'role-user'}">
-          ${msg.username === 'Spinzerr' ? 'OWNER' : 'USER'}
-        </span>
-        <span class="timestamp">${new Date(msg.timestamp).toLocaleTimeString()}</span>
-      </div>
-      <div class="text">${escapeHtml(msg.content)}</div>
-      ${msg.file_url ? createEmbed(msg.file_url) : ''}
-    </div>
-    <div class="message-controls">
-      ${(isSpinzerr || msg.user_id === currentUser.id) ? 
-        `<div class="control-btn delete">🗑️</div>
-         <div class="control-btn edit">✏️</div>` : ''}
-      <div class="reply-btn">↩️</div>
-    </div>
-  `;
-  
-  messagesContainer.appendChild(messageDiv);
-  
-  // Only auto-scroll if we were already at the bottom
-  if (wasAtBottom) {
-    messageDiv.scrollIntoView({ behavior: 'smooth' });
+  if (Array.isArray(result) && result.length > 0) {
+    const messages = [...result].reverse();
+    messages.forEach(msg => {
+      addMessageToUI(msg);
+    });
   }
-}
-
-function createEmbed(url) {
-  const ext = url.split('.').pop().toLowerCase();
-  if(['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
-    return `<div class="embed"><img src="${url}" alt="Image"></div>`;
-  } else if(['mp4', '3gp', 'webm'].includes(ext)) {
-    return `<div class="embed"><video controls><source src="${url}"></video></div>`;
-  } else if(['mp3', 'wav', 'ogg'].includes(ext)) {
-    return `<div class="embed"><audio controls><source src="${url}"></audio></div>`;
-  }
-  return '';
-}
-
-function escapeHtml(text) {
-  return text.replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[char]);
-}
-
-async function sendMessage(content, fileUrl = null) {
-  const msg = {
-    user_id: currentUser.id,
-    username: currentUser.username,
-    avatar_url: currentUser.avatar_url,
-    content: content,
-    timestamp: new Date().toISOString(),
-    channel: 'general',
-    file_url: fileUrl,
-    reply_to: replyingTo?.id || null,
-    replied_content: replyingTo?.content || null,
-    replied_username: replyingTo?.username || null
-  };
-  
-  await fetch('/api/v1/sql/?' + new URLSearchParams({
-    sql: `INSERT INTO messages (
-      user_id, username, avatar_url, content, timestamp, channel, file_url, 
-      reply_to, replied_content, replied_username
-    ) VALUES (
-      '${msg.user_id}', '${msg.username}', '${msg.avatar_url}', '${msg.content}', 
-      '${msg.timestamp}', '${msg.channel}', '${msg.file_url || ''}',
-      ${msg.reply_to ? `'${msg.reply_to}'` : 'NULL'}, 
-      ${msg.replied_content ? `'${msg.replied_content}'` : 'NULL'},
-      ${msg.replied_username ? `'${msg.replied_username}'` : 'NULL'}
-    )`
-  }));
-  
-  room.send({
-    type: 'new_message',
-    message: msg
-  });
-  
-  // Reset reply state
-  replyingTo = null;
-  document.querySelector('input[type="text"]').placeholder = 'Message #general';
 }
 
 function setupWebSocket() {
@@ -743,297 +398,125 @@ function setupWebSocket() {
     const data = event.data;
     if(data.type === 'new_message') {
       addMessageToUI(data.message);
-    } else if(data.type === 'connected' || data.type === 'disconnected') {
-      updateMembersList();
-    } else if(data.type === 'server_name_update') {
-      updateServerNameUI(data.name);
     }
+    if(data.type === 'connected' || data.type === 'disconnected') {
+      updateMembersList();
+    }
+  };
+  
+  room.onPeersChanged = () => {
+    updateMembersList();
   };
 }
 
 function updateMembersList() {
   const membersDiv = document.querySelector('.members');
-  const currentMembers = new Set(); // Track current members
+  membersDiv.innerHTML = '';
   
   Object.entries(room.party.peers).forEach(([clientId, peer]) => {
-    currentMembers.add(peer.username);
-    
-    // Only add if member doesn't already exist
-    if (!membersDiv.querySelector(`.member[data-username="${peer.username}"]`)) {
-      const memberDiv = document.createElement('div');
-      memberDiv.className = 'member';
-      memberDiv.dataset.username = peer.username;
-      memberDiv.innerHTML = `
-        <img class="avatar" src="${peer.avatarUrl}" alt="Avatar">
-        <div class="online-indicator"></div>
-        <div class="username">${peer.username}</div>
-        <span class="role ${peer.username === 'Spinzerr' ? 'role-owner' : 'role-user'}">
-          ${peer.username === 'Spinzerr' ? 'OWNER' : 'USER'}
-        </span>
-      `;
-      membersDiv.appendChild(memberDiv);
-    }
-  });
-  
-  // Remove disconnected members
-  membersDiv.querySelectorAll('.member').forEach(memberDiv => {
-    if (!currentMembers.has(memberDiv.dataset.username)) {
-      memberDiv.remove();
-    }
-  });
-}
-
-function setupReplyHandlers() {
-  document.querySelector('.messages').addEventListener('click', (e) => {
-    if (e.target.classList.contains('reply-btn')) {
-      const messageDiv = e.target.closest('.message');
-      const content = messageDiv.querySelector('.text').textContent;
-      const username = messageDiv.querySelector('.username').textContent;
-      const messageId = messageDiv.dataset.messageId;
-      
-      replyingTo = {
-        id: messageId,
-        content: content,
-        username: username
-      };
-      
-      const input = document.querySelector('input[type="text"]');
-      input.placeholder = `Replying to ${username}`;
-      input.focus();
-    }
-  });
-}
-
-// File upload handling
-document.querySelector('input[type="file"]').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if(file) {
-    const preview = document.querySelector('.preview-container');
-    preview.style.display = 'block';
-    
-    if(file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        document.querySelector('.preview-image').src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-    
-    try {
-      const url = await websim.upload(file);
-      const input = document.querySelector('input[type="text"]');
-      const content = input.value;
-      sendMessage(content, url);
-      input.value = '';
-      preview.style.display = 'none';
-    } catch(error) {
-      console.error('Upload failed:', error);
-    }
-  }
-});
-
-// Message input handling
-document.querySelector('input[type="text"]').addEventListener('keypress', (e) => {
-  if(e.key === 'Enter' && e.target.value.trim()) {
-    sendMessage(e.target.value);
-    e.target.value = '';
-    document.querySelector('.preview-container').style.display = 'none';
-  }
-});
-
-// Add Spinzerr Tools functionality:
-function setupSpinzerrTools() {
-  // Only set up if user is Spinzerr
-  if (!isSpinzerr) return;
-  
-  // Show the Spinzerr Tools button
-  document.querySelector('.spinzerr-tools').style.display = 'block';
-  
-  // Server name editing
-  document.querySelector('.server-name').addEventListener('click', async (e) => {
-    if (e.target.classList.contains('edit-btn')) {
-      const serverNameDiv = document.querySelector('.server-name');
-      const currentName = serverNameDiv.querySelector('span').textContent;
-      
-      serverNameDiv.innerHTML = `
-        <input type="text" value="${currentName}">
-        <div class="edit-btn">💾</div>
-      `;
-      
-      const input = serverNameDiv.querySelector('input');
-      input.focus();
-      
-      input.addEventListener('keypress', async (e) => {
-        if (e.key === 'Enter') {
-          await updateServerName(input.value);
-          updateServerNameUI(input.value);
-        }
-      });
-      
-      serverNameDiv.querySelector('.edit-btn').addEventListener('click', async () => {
-        await updateServerName(input.value);
-        updateServerNameUI(input.value);
-      });
-    }
-  });
-
-  // Modal controls
-  const modal = document.querySelector('.spinzerr-modal');
-  const overlay = document.querySelector('.spinzerr-modal-overlay');
-  
-  document.querySelector('.spinzerr-tools').addEventListener('click', () => {
-    modal.style.display = 'block';
-    overlay.style.display = 'block';
-  });
-  
-  document.querySelector('.spinzerr-modal-close').addEventListener('click', () => {
-    modal.style.display = 'none';
-    overlay.style.display = 'none';
-  });
-  
-  // Tool button handlers
-  document.querySelectorAll('.spinzerr-tool-button').forEach(button => {
-    button.addEventListener('click', () => handleToolAction(button.dataset.action));
-  });
-}
-
-async function handleToolAction(action) {
-  switch(action) {
-    case 'create-category':
-      const categoryName = await promptUser('Enter category name:');
-      if (categoryName) {
-        await createCategory(categoryName);
-      }
-      break;
-      
-    case 'create-channel':
-      const channelData = await promptUser('Enter channel name:', 'Enter category:');
-      if (channelData) {
-        await createChannel(channelData.value1, channelData.value2);
-      }
-      break;
-      
-    case 'edit-category':
-      // Show category selection and edit UI
-      break;
-      
-    case 'edit-channel':
-      // Show channel selection and edit UI
-      break;
-      
-    case 'mute-user':
-    case 'unmute-user':
-    case 'ban-user':
-    case 'kick-user':
-      showUserList(action);
-      break;
-  }
-}
-
-function promptUser(message, message2 = null) {
-  return new Promise(resolve => {
-    const modal = document.querySelector('.spinzerr-modal');
-    const currentContent = modal.innerHTML;
-    
-    modal.innerHTML = `
-      <div class="spinzerr-modal-header">
-        <div class="spinzerr-modal-title">🛠️ Spinzerr Tools</div>
-        <div class="spinzerr-modal-close">×</div>
-      </div>
-      <input class="spinzerr-input" placeholder="${message}">
-      ${message2 ? `<input class="spinzerr-input" placeholder="${message2}">` : ''}
-      <div class="spinzerr-tool-button">Submit</div>
-      <div class="spinzerr-tool-button">Cancel</div>
+    const memberDiv = document.createElement('div');
+    memberDiv.className = 'member';
+    memberDiv.innerHTML = `
+      <div class="online-indicator"></div>
+      <img class="avatar" src="${peer.avatarUrl}" alt="Avatar">
+      <div class="username">${peer.username}</div>
     `;
-    
-    const inputs = modal.querySelectorAll('.spinzerr-input');
-    const [submit, cancel] = modal.querySelectorAll('.spinzerr-tool-button');
-    
-    submit.addEventListener('click', () => {
-      modal.innerHTML = currentContent;
-      if (message2) {
-        resolve({ value1: inputs[0].value, value2: inputs[1].value });
-      } else {
-        resolve(inputs[0].value);
-      }
-    });
-    
-    cancel.addEventListener('click', () => {
-      modal.innerHTML = currentContent;
-      resolve(null);
-    });
+    membersDiv.appendChild(memberDiv);
   });
 }
 
-function showUserList(action) {
-  const modal = document.querySelector('.spinzerr-modal');
-  const currentContent = modal.innerHTML;
+function addMessageToUI(msg) {
+  const messagesDiv = document.querySelector('.messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message';
   
-  let userList = '<div class="spinzerr-user-list">';
-  Object.values(room.party.peers).forEach(peer => {
-    if (peer.username !== 'Spinzerr') {
-      userList += `
-        <div class="spinzerr-user-item" data-username="${peer.username}">
-          <img class="avatar" src="${peer.avatarUrl}" alt="Avatar">
-          <span>${peer.username}</span>
-        </div>
-      `;
-    }
-  });
-  userList += '</div>';
+  let content = msg.content;
+  if(msg.file_url) {
+    content += `<br><img src="${msg.file_url}" style="max-width: 300px; border-radius: 4px; margin-top: 8px;">`;
+  }
   
-  modal.innerHTML = `
-    <div class="spinzerr-modal-header">
-      <div class="spinzerr-modal-title">Select User to ${action.split('-')[0]}</div>
-      <div class="spinzerr-modal-close">×</div>
+  messageDiv.innerHTML = `
+    <img class="avatar" src="${msg.avatar_url}" alt="Avatar">
+    <div class="message-content">
+      <div class="username">${msg.username}</div>
+      <div class="text">${content}</div>
     </div>
-    ${userList}
-    <div class="spinzerr-tool-button">Cancel</div>
   `;
   
-  modal.querySelectorAll('.spinzerr-user-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const username = item.dataset.username;
-      handleUserAction(action, username);
-      modal.innerHTML = currentContent;
-    });
+  messagesDiv.appendChild(messageDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+async function sendMessage(content = null, fileUrl = null) {
+  const input = document.querySelector('.input-area input[type="text"]');
+  content = content || input.value;
+  
+  if(!content.trim() && !fileUrl) return;
+  
+  const msg = {
+    user_id: currentUser.id,
+    username: currentUser.username,
+    avatar_url: currentUser.avatar_url,
+    content: content,
+    timestamp: new Date().toISOString(),
+    file_url: fileUrl
+  };
+  
+  const query = `
+    INSERT INTO messages (user_id, username, avatar_url, content, timestamp, file_url)
+    VALUES ('${msg.user_id}', '${msg.username}', '${msg.avatar_url}', 
+            '${msg.content}', '${msg.timestamp}', '${msg.file_url || ''}')
+  `;
+  
+  await fetch('/api/v1/sql/?' + new URLSearchParams({sql: query}));
+  
+  room.send({
+    type: 'new_message',
+    message: msg
   });
   
-  modal.querySelector('.spinzerr-tool-button').addEventListener('click', () => {
-    modal.innerHTML = currentContent;
-  });
+  input.value = '';
 }
 
-async function handleUserAction(action, username) {
-  // Send websocket message to handle user moderation
-  room.send({
-    type: action,
-    username: username
+function setupEventListeners() {
+  const fileInput = document.querySelector('input[type="file"]');
+  const fileBtn = document.querySelector('.file-btn');
+  const input = document.querySelector('.input-area input[type="text"]');
+  
+  fileBtn.addEventListener('click', () => {
+    fileInput.click();
   });
   
-  // You'll need to implement the actual moderation logic here
-  console.log(`${action} ${username}`);
-}
-
-// Add these functions to handle category and channel creation
-async function createCategory(name) {
-  // Implementation for creating categories
-  room.send({
-    type: 'create_category',
-    name: name
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if(file) {
+      try {
+        const url = await window.websim.upload(file);
+        const content = input.value;
+        sendMessage(content, url);
+        input.value = '';
+      } catch(error) {
+        console.error('Upload failed:', error);
+      }
+    }
+  });
+  
+  input.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  
+  document.querySelector('.auth-button').addEventListener('click', () => {
+    if(isLoginMode) {
+      login();
+    } else {
+      register();
+    }
   });
 }
 
-async function createChannel(name, category) {
-  // Implementation for creating channels
-  room.send({
-    type: 'create_channel',
-    name: name,
-    category: category
-  });
-}
-
-// Initialize chat
-initializeChat();
+initialize();
 </script>
-</body></html>
+</html>
